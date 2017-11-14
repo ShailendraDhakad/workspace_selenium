@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite guice-stage="DEVELOPMENT" name="Failed suite [Suite]">
+  <test name="Test(failed)">
+    <classes>
+      <class name="testCases.teleSalesPortal.Medadv_Q2E_04">
+        <methods>
+          <include name="afterMethod"/>
+          <include name="getResult"/>
+          <include name="beforeMethod"/>
+        </methods>
+      </class> <!-- testCases.teleSalesPortal.Medadv_Q2E_04 -->
+      <class name="testCases.teleSalesPortal.Medadv_Q2E_06">
+        <methods>
+          <include name="beforeMethod"/>
+          <include name="getResult"/>
+          <include name="MedAdv_Q2E_Fill_MedicareInsuForm_Invalid"/>
+          <include name="afterMethod"/>
+        </methods>
+      </class> <!-- testCases.teleSalesPortal.Medadv_Q2E_06 -->
+      <class name="testCases.teleSalesPortal.Medadv_Q2E_07">
+        <methods>
+          <include name="beforeMethod"/>
+          <include name="getResult"/>
+          <include name="afterMethod"/>
+          <include name="main"/>
+        </methods>
+      </class> <!-- testCases.teleSalesPortal.Medadv_Q2E_07 -->
+      <class name="testCases.teleSalesPortal.Medadv_Q2E_02">
+        <methods>
+          <include name="getResult"/>
+          <include name="beforeMethod"/>
+          <include name="afterMethod"/>
+        </methods>
+      </class> <!-- testCases.teleSalesPortal.Medadv_Q2E_02 -->
+      <class name="testCases.teleSalesPortal.Medadv_Q2E_05">
+        <methods>
+          <include name="beforeMethod"/>
+          <include name="getResult"/>
+          <include name="main"/>
+          <include name="afterMethod"/>
+        </methods>
+      </class> <!-- testCases.teleSalesPortal.Medadv_Q2E_05 -->
+      <class name="testCases.teleSalesPortal.Medadv_Q2E_01">
+        <methods>
+          <include name="afterMethod"/>
+          <include name="beforeMethod"/>
+          <include name="getResult"/>
+          <include name="setUp"/>
+          <include name="tearDown"/>
+        </methods>
+      </class> <!-- testCases.teleSalesPortal.Medadv_Q2E_01 -->
+      <class name="testCases.teleSalesPortal.Medadv_Q2E_03">
+        <methods>
+          <include name="getResult"/>
+          <include name="beforeMethod"/>
+          <include name="afterMethod"/>
+        </methods>
+      </class> <!-- testCases.teleSalesPortal.Medadv_Q2E_03 -->
+    </classes>
+  </test> <!-- Test(failed) -->
+</suite> <!-- Failed suite [Suite] -->

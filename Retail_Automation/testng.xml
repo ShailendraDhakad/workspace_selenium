@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Suite">
+  <test name="Test">
+    <classes>
+      <class name="testCases.teleSalesPortal.U65_Q2E_07_updated"/>
+      <class name="testCases.teleSalesPortal.U65_Q2E_03_updated"/>
+      <class name="testCases.teleSalesPortal.Medadv_Q2E_01"/>
+      <class name="testCases.teleSalesPortal.U65_Q2E_06_updated"/>
+      <class name="testCases.teleSalesPortal.Medadv_Q2E_02"/>
+      <class name="testCases.teleSalesPortal.Medadv_Q2E_03"/>
+      <class name="testCases.teleSalesPortal.Medadv_Q2E_04"/>
+      <class name="testCases.teleSalesPortal.Medadv_Q2E_05"/>
+      <class name="testCases.teleSalesPortal.U65_Q2E_04_updated"/>
+      <class name="testCases.teleSalesPortal.Medadv_Q2E_06"/>
+      <class name="testCases.teleSalesPortal.U65_Q2E_05_updated"/>
+      <class name="testCases.teleSalesPortal.Medadv_Q2E_07"/>
+      <class name="testCases.teleSalesPortal.U65_Q2E_1_Updated"/>
+      <class name="testCases.teleSalesPortal.U65_Q2E_02_updated"/>
+    </classes>
+  </test> <!-- Test -->
+</suite> <!-- Suite -->
