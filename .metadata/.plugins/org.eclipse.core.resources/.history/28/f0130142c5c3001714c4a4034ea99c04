@@ -1,0 +1,31 @@
+package appModules;
+
+import java.sql.Driver;
+import java.util.Map;
+
+import testData.PDFrepository_Fields;
+import pageObjects.PageAdminTool;
+import pageObjects.PageAdminTool.PagePDFRepository;
+import utility.Selenium;
+
+public class SBCpdfRepository {
+	
+	public static PDFrepository_Fields objPDFrepository_Fields= new PDFrepository_Fields();
+
+	public static void searchSBCpdfbyFileName (Map<String,String> TestDataDictionary) {
+		
+		Selenium.click("Search_Box", PagePDFRepository.Search_Box);
+		//fulfillmentSearchCriteria
+		objPDFrepository_Fields.setfilename(TestDataDictionary.get("Filename"));
+		String strOption=objPDFrepository_Fields.getfilename();
+		Selenium.type(PageAdminTool.PagePDFRepository.Search_Box, strOption);
+		Selenium.click("Go_Button", PageAdminTool.PagePDFRepository.Go_button);
+		Selenium.driver.getPageSource().contains("sbc_PD0000005250_MD0000004252_RX0000001474_DN0000000226_VS0000000120_20170901_20180831.pdf"); 	
+		
+	
+			/*//Click Fulfillment Request Tab
+			Selenium.waitForElement(Selenium.driver, PageFullfilment.ELE_FULLFILLMENT_TAB);
+			Selenium.click("Fullfillment Request Tab", PageFullfilment.ELE_FULLFILLMENT_TAB);*/
+	}
+	
+}

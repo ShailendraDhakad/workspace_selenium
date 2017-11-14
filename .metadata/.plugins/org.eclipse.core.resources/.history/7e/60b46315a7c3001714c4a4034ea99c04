@@ -1,0 +1,30 @@
+package appModules;
+
+import java.util.Map;
+
+import testData.PDFrepository_Fields;
+import pageObjects.PageAdminTool;
+import pageObjects.PageAdminTool.PagePDFRepository;
+import utility.Selenium;
+
+public class SBCpdfRepository {
+	
+	public static PDFrepository_Fields objPDFrepository_Fields= new PDFrepository_Fields();
+
+	public static void searchSBCpdf (Map<String,String> TestDataDictionary) {
+		
+		Selenium.click("Search_Box", PagePDFRepository.Search_Box);
+		//fulfillmentSearchCriteria
+		objPDFrepository_Fields.setfilename("Filename");
+		String strOption=objPDFrepository_Fields.getfilename();
+		Selenium.type(PageAdminTool.PagePDFRepository.Search_Box, strOption);
+		/*public static void selectFulfillmentView(Map<String, String> TestDataDictionary){
+			objFulfillmentdata.setFulfillmentRequestType(TestDataDictionary.get("FulfillmentRequestType"));
+			String strOption=objFulfillmentdata.getFulfillmentRequestType();
+			
+			//Click Fulfillment Request Tab
+			Selenium.waitForElement(Selenium.driver, PageFullfilment.ELE_FULLFILLMENT_TAB);
+			Selenium.click("Fullfillment Request Tab", PageFullfilment.ELE_FULLFILLMENT_TAB);*/
+	}
+	
+}

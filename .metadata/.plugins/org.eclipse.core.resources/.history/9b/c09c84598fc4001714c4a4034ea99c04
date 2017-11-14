@@ -1,0 +1,8 @@
+package pageObjects;
+
+public class PageSBCrequest {
+
+	public static final String TEXT_MESSAGE = "xpath=//*[@id=\"R328209613792957559\"]/div[2]/div/div[2]/center/font";
+	public static final String ADHOC_SBC_REQUEST_MESSAGE = "xpath=//*[@id=\"R1175624030018262488\"]/div[1]/h1";
+	public static final String REQUEST_SBC_MESSAGE = "//*[@id=\"B1175624208238262489\"]/span";
+}

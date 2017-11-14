@@ -1,0 +1,59 @@
+package testCases.AdminTool;
+
+import java.util.Map;
+
+import org.apache.log4j.xml.DOMConfigurator;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.os.WindowsUtils;
+import org.testng.ITestResult;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
+import appModules.SBC_AdminTool;
+import utility.AdvanceReporting;
+import utility.BaseExtentReport;
+import utility.Constant;
+import utility.ExcelUtils;
+import utility.Log;
+import utility.Selenium;
+import utility.Utils;
+
+public class BulkLoadRepository extends BaseExtentReport{
+
+	public  WebDriver driver;
+	Map<String, String> TestDatadictionary;
+	
+	@BeforeMethod
+	  public void beforeMethod() throws Exception {
+			
+			try {
+				WindowsUtils.tryToKillByName("chrome.exe");
+				WindowsUtils.tryToKillByName("chromedriver.exe");
+			} catch (Exception e) {
+			
+				e.printStackTrace();
+			}
+		
+		  	DOMConfigurator.configure("log4j.xml");
+		  	Selenium.sTestCaseName = Utils.getTestCaseName(this.toString());
+		  	Log.startTestCase(Selenium.sTestCaseName);
+		 	
+			//Set Extent Reporter Object and Test Object
+		 	test=extent.createTest(Utils.getTestCaseName(this.toString()));
+		 	AdvanceReporting.setTest(test);
+		 	
+		 	Map<String, String> AppURLdictionary = ExcelUtils.ReadExcelRowByIndexValue(Constant.Applications_URL_File,"SIT","SBC_AdminTool");
+			driver = Selenium.openApplication(AppURLdictionary.get("URL"), "chrome");	 
+	}
+
+	  
+	  @Test
+	  public void test() throws Exception {
+		
+					 	
+			SBC_AdminTool.login();
+       }
+	
+       
+ }

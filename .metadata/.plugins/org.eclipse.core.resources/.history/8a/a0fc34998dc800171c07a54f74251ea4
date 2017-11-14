@@ -1,0 +1,428 @@
+// --------------------------------------------------------------------
+// GetAllCLOBs.java
+// 
+// by Barry Welch
+//
+// 
+// --------------------------------------------------------------------
+// Java Application class imports.
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.Reader;
+import java.io.Writer;
+// Generic JDBC imports.
+import java.sql.Clob;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+
+// -------------------------------------------------------------------/
+public class GetAllCLOBs {
+	// Define database connections.
+	private String connect;
+	private String userid;
+	private String passwd;
+	private String windchillId;
+	private String formatid;
+	private String source;
+	private String startAt;
+	private String nodetail;
+
+	// Define display variables.
+	private String clobText;
+
+	// Current connection strings for DEV, UAT and PROD
+	// OLD - private String fmsdev1 = "(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=lndbd101a-vip.hphc.org)(PORT=1551))(ADDRESS=(PROTOCOL=TCP)(HOST=lndbd101b-vip.hphc.org)(PORT=1551)))(CONNECT_DATA=(SERVICE_NAME=fmsdev1)))";
+        private String fmsdev1 = "(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=tcp)(HOST= devdb01.hphc.org)(PORT=1551))(ADDRESS=(PROTOCOL=tcp)(HOST= devdb02.hphc.org)(PORT=1551))(ADDRESS=(PROTOCOL=tcp)(HOST= devdb03.hphc.org)(PORT=1551))(ADDRESS=(PROTOCOL=tcp)(HOST= devdb04.hphc.org)(PORT=1551)))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=fmsdev1svc.hphc.org)))";
+
+	private String fmsuat1 = "(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=lndbu101a-vip.hphc.org)(PORT=1590))(ADDRESS=(PROTOCOL=TCP)(HOST=lndbu101b-vip.hphc.org)(PORT=1590))(ADDRESS=(PROTOCOL=TCP)(HOST=lndbu101c-vip.hphc.org)(PORT=1590)))(CONNECT_DATA=(SERVICE_NAME=fmsuat1)))";
+	// private String fmssit1 = "(DESCRIPTION= (ADDRESS=(PROTOCOL=tcp)(HOST=lndbu101a-vip.hphc.org)(PORT=1532)) (CONNECT_DATA= (SERVICE_NAME=fmssit1) (INSTANCE_NAME=fmssit11)))";
+	private String fmssit1 = "(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=tcp)(HOST= uatdb01.hphc.org)(PORT=1532))(ADDRESS=(PROTOCOL=tcp)(HOST= uatdb02.hphc.org)(PORT=1532))(ADDRESS=(PROTOCOL=tcp)(HOST= uatdb03.hphc.org)(PORT=1532))(ADDRESS=(PROTOCOL=tcp)(HOST= uatdb04.hphc.org)(PORT=1532)))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=fmssit1svc.hphc.org)))";
+
+
+//	private String fmsprd1 = "(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=tcp)(HOST=lndb101a-vip.hphc.org)(PORT=1541))(ADDRESS=(PROTOCOL=tcp)(HOST=lndb101c-vip.hphc.org)(PORT=1541))(ADDRESS=(PROTOCOL=tcp)(HOST=lndb101b-vip.hphc.org)(PORT=1541)))(CONNECT_DATA=(SERVICE_NAME=fmsprd1svc)))";
+//      private String fmsprd1 = "(DESCRIPTION=(ADDRESS=(PROTOCOL=tcp)(HOST=lndb101a-vip.hphc.org)(PORT=1541))(CONNECT_DATA=(SERVICE_NAME=fmsprd1)(INSTANCE_NAME=fmsprd11)))";
+//	private String fmsprd1 = "(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=lndb102a-vip.hphc.org)(PORT=1541))(ADDRESS=(PROTOCOL=TCP)(HOST=lndb102b-vip.hphc.org)(PORT=1541)))(CONNECT_DATA=(SERVICE_NAME=fmsprd1svc_ro)(UR=A)))";
+
+        // private String fmsprd1 = "(DESCRIPTION=(LOAD_BALANCE=YES)(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=lndb101a-vip.hphc.org)(PORT=1541))(ADDRESS=(PROTOCOL=TCP)(HOST=lndb101b-vip.hphc.org)(PORT=1541)))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=fmsprd1svc)))";
+
+        private String fmsprd1 = "(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=lndb102a-vip.hphc.org)(PORT=1541))(ADDRESS=(PROTOCOL=TCP)(HOST=lndb102b-vip.hphc.org)(PORT=1541)))(CONNECT_DATA=(SERVICE_NAME=fmsprd1svc_ro)(UR=A)))" ;
+
+
+
+        private String fmsdit1 = "(DESCRIPTION= (ADDRESS=(PROTOCOL=tcp)(HOST=lndbd101a-vip.hphc.org)(PORT=1571)) (CONNECT_DATA= (SERVICE_NAME=fmsdit1) (INSTANCE_NAME=fmsdit11)))";
+
+
+
+	private File outputNormalizedFolder;
+	private File outputDetailFolder;
+	private File outputSummaryFolder;
+
+	// -----------------------------------------------------------------/
+	public GetAllCLOBs (String db, String userid, String passwd, String windchillId, String formatid, String source, String startAt, String nodetail) {
+
+
+		// Create the output directories
+		String folder = "data\\download_normalized";
+		this.outputNormalizedFolder = new File(folder);
+
+
+		if (this.outputNormalizedFolder.exists() && !this.outputNormalizedFolder.isDirectory()) {
+		    System.err.println("Can't create folder: " + folder + " - A file by this name already exists.");
+		    System.exit(1);
+		}
+
+		if (!this.outputNormalizedFolder.exists() && !this.outputNormalizedFolder.mkdirs()){
+		    System.err.println("Can't create folder: " + folder);
+		    System.exit(1);
+		}
+		
+
+	/*	folder = "data\\download_detail";
+		this.outputDetailFolder = new File(folder);
+                 
+
+		if (this.outputDetailFolder.exists() && !this.outputDetailFolder.isDirectory()) {
+		    System.err.println("Can't create folder: " + folder + " - A file by this name already exists.");
+		    System.exit(1);
+		}
+
+                if (!this.outputDetailFolder.exists() && !this.outputDetailFolder.mkdirs()){
+		    System.err.println("Can't create: " + folder);
+		    System.exit(1);
+		}
+
+		folder = "data\\download_summary";
+		this.outputSummaryFolder = new File(folder);
+                 
+
+		if (this.outputSummaryFolder.exists() && !this.outputSummaryFolder.isDirectory()) {
+		    System.err.println("Can't create folder: " + folder + " - A file by this name already exists.");
+		    System.exit(1);
+		}
+
+                if (!this.outputSummaryFolder.exists() && !this.outputSummaryFolder.mkdirs()){
+		    System.err.println("Can't create: " + folder);
+		    System.exit(1);
+		} */
+
+    		if (db.equalsIgnoreCase("prod") || db.equalsIgnoreCase("prd") || db.equalsIgnoreCase("fmsprd1")) {
+		    this.connect = this.fmsprd1;
+		}
+		else if (db.equalsIgnoreCase("uat") || db.equalsIgnoreCase("fmsuat1")) {
+		    this.connect = this.fmsuat1;
+		}
+		else if (db.equalsIgnoreCase("dev") || db.equalsIgnoreCase("fmsdev1")) {
+		    this.connect = this.fmsdev1;
+		}
+		else if (db.equalsIgnoreCase("sit") || db.equalsIgnoreCase("fmssit1")) {
+		    this.connect = this.fmssit1;
+		}
+		else if (db.equalsIgnoreCase("dit") || db.equalsIgnoreCase("fmsdit1")) {
+		    this.connect = this.fmsdit1;
+		}
+		else {
+		    System.err.println("Unknown database server: " + db);
+		    System.exit(1);
+		}
+
+		this.userid = userid;
+		this.passwd = passwd;
+
+		this.windchillId = windchillId.toUpperCase();
+		this.source = source.toUpperCase();
+		this.startAt = startAt.toUpperCase();
+		this.formatid = formatid.toUpperCase();
+		this.nodetail = nodetail.toUpperCase();
+
+		clobText = "";
+
+                System.err.println("Creating GetAllCLOBs object connected to " + db + "=" + this.connect);
+	}
+
+
+	// -----------------------------------------------------------------/
+	public void runQuery() {
+		// Define method variables.
+		char[] buffer;
+		int count = 0;
+		int length = 0;
+		String data = null;
+		String[] type;
+		String[] name;
+		StringBuffer sb;
+                
+
+		try {
+			// Load Oracle JDBC driver.
+			
+			System.err.println("in runQuery (try)...");
+
+			DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
+			
+			System.err.println("registerDriver complete...");
+
+			// Define and initialize a JDBC connection.
+			// Connection conn = DriverManager.getConnection("jdbc:oracle:thin:@" + host + ":" + port + ":" + dbname, userid, passwd);
+
+			// Thin driver
+			Connection conn = DriverManager.getConnection("jdbc:oracle:thin:@" + this.connect, this.userid, this.passwd);
+
+			// Fat driver  - doesn't work...
+                        // Connection conn = DriverManager.getConnection("jdbc:oracle:oci8:@" + this.connect, this.userid, this.passwd);
+
+			System.err.println("getConnection complete...");
+
+			// Define metadata object.
+			DatabaseMetaData dmd = conn.getMetaData();
+
+			System.err.println("getMetaData complete...");
+
+			// Create statement.
+			Statement stmt = conn.createStatement();
+
+			System.err.println("createStatement complete...");
+
+
+			// Build query.
+            String query = "select PRODUCT_ID"                                                 
+                     +     " , VERSION_ID"                                                  
+                     +     " , VERSION_ITERATION"                                                 
+                     +     " , TO_CHAR(EFF_DATE, 'YYYY-MM-DD') as EFF_DATE"                 
+                     +     " , TO_CHAR(END_DATE, 'YYYY-MM-DD') as END_DATE"            
+                                                               
+                     +     " , NORMALIZED_DATA"                                        
+                                                             
+                     +     " , CREATE_DATE"                                            
+                     +     " , UPDATE_DATE"                                                       
+                     +     " , OVERRIDE_SUMMARY"                                       
+                     +     " , ROW_CREATE_DATE"                                      
+                     +     " , ROW_UPDATE_DATE"                                      
+                     +     " , STATE"                                                
+                     +     " , SOURCE"                                               
+                     +     " , LEGACY_ID_TYPE"                                       
+                     +     " , FORMAT_ID"                                      
+                     +  " from entserv.ess_product_xml_xenv"                                  
+                     + " where source like '" + this.source + "'"
+                     +   " and product_id like '" + this.windchillId + "'"
+                     +   " and format_id = '" + this.formatid + "'"                                       
+                     +   " and state in ('RELEASED','INBUILD','CONFIGURED' , 'RETIRED')"
+					 +   " and sysdate between eff_Date and end_Date";
+                 //  +   " and state = 'INWORK'";
+
+			if (this.startAt.length() == 12) {
+			    query += " and product_id >= '" + this.startAt + "'";
+			}
+
+			query += " order by PRODUCT_ID, VERSION_ID, VERSION_ITERATION";
+												         
+			System.err.println("Query = " + query);
+
+			// Execute query.
+			ResultSet rset = stmt.executeQuery(query);
+
+			System.err.println("excuteQuery complete...");
+
+			String productId;
+			String version;
+			String effDate;
+			String endDate;
+			String fileName;
+
+			while (rset.next()) {
+			    productId = rset.getString("PRODUCT_ID");
+			    version = rset.getString("VERSION_ID") + "." + rset.getString("VERSION_ITERATION");
+			    effDate   = rset.getString("EFF_DATE");
+			    endDate   = rset.getString("END_DATE");
+
+			    fileName  = productId + "." + version + "_" + effDate + "_" + endDate	+ ".xml";
+
+			    Clob clob = rset.getClob("NORMALIZED_DATA");
+
+			    if (clob != null) {
+				Reader clobReader = clob.getCharacterStream();
+				saveReader(this.outputNormalizedFolder, fileName, clobReader);
+				clobReader.close();
+				System.err.println(fileName + " saved...");
+ 			    }
+			    else
+			    {
+				System.err.println(productId + " ver " + version + " - NORMALIZED_DATA column is NULL");
+			    }
+
+			/*    if (!this.nodetail.equals("NODETAIL")) {
+				clob = rset.getClob("DETAIL_DATA");
+
+				if (clob != null) {
+				    Reader clobReader = clob.getCharacterStream();
+				    saveReader(this.outputDetailFolder, fileName, clobReader);
+				    clobReader.close();
+				    System.err.println(fileName + " saved...");
+				}
+				else
+				{
+				    System.err.println(productId + " ver " + version + " - DETAIL_DATA column is NULL");
+				}
+				}
+				if (!this.nodetail.equals("NODETAIL")) {
+			//	clob = rset.getClob("SUMMARY_DATA");
+
+				if (clob != null) {
+				    Reader clobReader = clob.getCharacterStream();
+				    saveReader(this.outputSummaryFolder, fileName, clobReader);
+				    clobReader.close();
+				    System.err.println(fileName + " saved...");
+				}
+				else
+				{
+				    System.err.println(productId + " ver " + version + " - Summary_DATA column is NULL");
+				}
+			    } */
+
+			}
+			
+			// Close resources.
+			rset.close();
+			stmt.close();
+			conn.close();
+
+		}
+		catch (SQLException e) {
+    			System.err.println(e.getMessage());
+                
+			if (e.getSQLState() == null) {
+				System.err.println(
+				  new SQLException("Oracle Thin Client Net8 Connection Error.",
+						   "ORA-" + e.getErrorCode() +
+						   ": Incorrect Net8 thin client arguments:\n\n" +
+						   "  connect string  [" + this.connect + "]\n"
+						   , e.getErrorCode()).getSQLState());
+				// Return an empty String on error.
+				//return;
+			}
+			else {
+				System.err.println(e.getMessage());
+				//return;
+			}
+		}
+		catch (Exception e) {
+		    System.err.println(e.getMessage());
+		    //return;
+		}
+		finally {
+			//if (data == null) System.exit(1);
+		}
+	}
+
+	// -----------------------------------------------------------------/
+          public static void saveReader(File outFolder, String name, Reader body) {
+	    int c;
+	    try {
+
+              File outFile  = new File(outFolder, name);
+
+
+	      Writer f = new FileWriter(outFile);
+
+
+	      while ((c = body.read()) > -1) {
+
+		f.write(c);
+
+	      }
+
+	      f.close();
+
+	    } catch (Exception e) {
+	      System.err.println("Exception: "+e.getMessage());
+	      e.printStackTrace();
+	    }
+	  }
+
+	// -----------------------------------------------------------------/
+	public static void main(String[] args) {
+
+    		// Example java GetAllCLOBs fmsdev1 user pass windchill source startAt
+		String windchillId = "%";
+		String formatid = "BASE";
+		String source = "%";
+		String startAt = "";
+		String nodetail = "";
+
+                System.err.println("Server:"        + args[0]);
+	        System.err.println("User: "         + args[1]);
+    		System.err.println("Password: "     + args[2]);
+
+		if (args.length > 3) {
+		    windchillId = args[3];
+		}
+
+		if (args.length > 4) {
+		    formatid = args[4];
+		}
+
+		if (args.length > 5) {
+		    source = args[5];
+		}
+
+		if (args.length > 6) {
+		    startAt = args[6];
+		}
+
+		if (args.length > 7) {
+		    nodetail = args[7];
+		}
+
+		System.err.println("Windchill ID: " + windchillId);
+		System.err.println("Source: "       + windchillId);
+		
+		GetAllCLOBs getAllCLOBs = null;
+		if (new File(windchillId).isFile()){
+			System.err.println("parsing file:" + windchillId);
+			BufferedReader br = null;
+			System.err.println("I am a file "       + windchillId);
+			try {
+				br = new BufferedReader(new FileReader(windchillId));
+				String line = br.readLine();
+
+				while (line != null) {
+					if (line != null){
+						try{
+							String md = line.split(",")[2];
+							System.err.println(md);
+							//Any condition you don;t want to parse
+							if (!md.equals("Not Applicable")){
+								getAllCLOBs = new GetAllCLOBs(args[0], args[1], args[2], md, formatid, source, startAt, nodetail);
+								// Query the database.
+								getAllCLOBs.runQuery();
+							}
+						}
+						catch(Exception e){
+							System.err.println("Error parsing line:" + line);
+						}
+					}
+					line = br.readLine();
+				}
+				br.close();
+			} 
+			catch (Exception ex){
+				System.err.println("Exception in file handling" + ex);	
+			}
+		}
+		else{
+			getAllCLOBs = new GetAllCLOBs(args[0], args[1], args[2], windchillId, formatid, source, startAt, nodetail);
+			// Query the database.
+			getAllCLOBs.runQuery();
+		}
+                
+
+		System.exit(0);
+
+	}
+}

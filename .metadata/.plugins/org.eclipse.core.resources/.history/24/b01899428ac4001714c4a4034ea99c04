@@ -1,0 +1,6 @@
+package pageObjects;
+
+public class PageSBCrequest {
+
+	public static final String TEXTMESSAGE = "xpath=//*[@id=\"R328209613792957559\"]/div[2]/div/div[2]/center/font";
+}

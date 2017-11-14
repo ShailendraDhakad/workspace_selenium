@@ -1,0 +1,101 @@
+package appModules;
+
+import java.util.Map;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.os.WindowsUtils;
+import org.testng.Reporter;
+
+import pageObjects.PageAdminTool;
+import pageObjects.PageSBCrequest;
+import utility.Constant;
+import utility.ExcelUtils;
+import utility.Log;
+import utility.Selenium;
+import utility.StringUtil;
+import utility.XMLUtil;
+
+
+public class SBCrequestingPage {
+	public static WebDriver driver;
+	public static testData.SBCrequestingPage objSBCrequestingPage = new testData.SBCrequestingPage();
+	public static void login() {
+		
+
+		try {
+			WindowsUtils.tryToKillByName("chrome.exe");
+			WindowsUtils.tryToKillByName("chromedriver.exe");
+		} catch (Exception e) {
+		
+			e.printStackTrace();
+		}
+	
+
+		Map<String, String> AppURLdictionary = ExcelUtils.ReadExcelRowByIndexValue(Constant.Applications_URL_File,"SIT","SBC_RequestPage");
+		driver = Selenium.openApplication(AppURLdictionary.get("URL"), "chrome");
+		
+		 {
+				
+				if ( SBCrequestingPage.isLoginPage() ) {
+					Reporter.log("Logging into SBC Request Page");
+					Log.info("Logging into SBC Request Page");
+					
+					
+					String user = XMLUtil.getXMLValue(Constant.Credential_File, "//Credentials/SIT/Project/AdminTool/UserName");
+					String pass = XMLUtil.getXMLValue(Constant.Credential_File, "//Credentials/SIT/Project/AdminTool/Password");
+					Selenium.type(PageAdminTool.TEXT_USERNAME,user);
+					Selenium.type(PageAdminTool.TEXT_PASSWORD, pass);
+					Selenium.click("Login",PageAdminTool.BUTTON_LOGIN);
+					if ( Selenium.isElementPresent("REQUEST_SBC_BUTTON",PageSBCrequest.PageSBCrequestFields.REQUEST_SBC_BUTTON)&Selenium.isElementPresent("ADHOC_SBC_REQUEST_MESSAGE", PageSBCrequest.ADHOC_SBC_REQUEST_MESSAGE)) {
+						Log.info("SBC Request page sucessfully loaded");
+						Reporter.log("SBC Request page sucessfully loaded");
+						Selenium.passTest("Logging into SBC request page is passed",true);
+						
+					}
+					else{
+						Log.info("SBC Request page loading failed");
+						Reporter.log("SBC Request page loading failed");
+						Selenium.passTest("Logging into SBC request page is failed",true);
+					}
+				}
+				else
+				{
+					Log.debug("Not at SBC Request page page");
+					Selenium.failTest("Failed authentication into the SBC Request Page Console!",true);
+					Reporter.log("Logging into SBC request page is failed");
+				}
+
+			}	
+
+	}
+
+	public static boolean isLoginPage(){
+		boolean sResult = false;
+		sResult = Selenium.isElementPresent("FMSSIT1", PageSBCrequest.TEXT_MESSAGE);
+		if(sResult){
+			Reporter.log("Application is at Login Page");
+			Selenium.passTest("Application is at Login Page");
+		}
+		else{
+			Reporter.log("Application is not at Login Page");
+			Selenium.passTest("Application is Not at Login Page");
+		}
+		return sResult;
+	}
+
+public static void RequestingSBCviaPlanID(Map<String,String>TestDataDictionary){
+	
+	Selenium.click("PlanID", PageSBCrequest.PageSBCrequestFields.PLAN_ID);
+	objSBCrequestingPage.setPlanDesignId(TestDataDictionary.get("Pd Id"));
+	String strOption=objSBCrequestingPage.getstringPlanDesignId();
+	Selenium.type(PageSBCrequest.PageSBCrequestFields.PLAN_ID, strOption);
+	
+	Selenium.click("PlanStartDate", PageSBCrequest.PageSBCrequestFields.PLAN_START_DATE);
+	objSBCrequestingPage.setPlanStartDate(TestDataDictionary.get("Start Date"));
+	String strOption1=objSBCrequestingPage.getPlanStartDate();
+	Log.info(strOption1);
+	//Selenium.type(PageSBCrequest.PageSBCrequestFields.PLAN_START_DATE, strOption1);
+	//Selenium.click("SBC Request Button", PageSBCrequest.PageSBCrequestFields.REQUEST_SBC_BUTTON);
+	
+}
+}

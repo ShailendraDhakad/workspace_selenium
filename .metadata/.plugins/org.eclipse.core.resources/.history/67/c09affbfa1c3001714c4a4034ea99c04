@@ -1,0 +1,14 @@
+package appModules;
+
+import pageObjects.PageAdminTool.PagePDFRepository;
+import utility.Selenium;
+
+public class SBCpdfRepository {
+
+	public static void searchSBCpdf () {
+		
+		Selenium.click("Search_Box", PagePDFRepository.Search_Box);
+		
+	}
+	
+}

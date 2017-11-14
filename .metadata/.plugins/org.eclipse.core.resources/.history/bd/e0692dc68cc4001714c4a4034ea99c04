@@ -1,0 +1,69 @@
+package appModules;
+
+import org.testng.Reporter;
+
+import pageObjects.PageAdminTool;
+import pageObjects.PageAdminTool.PageAdminHome;
+import pageObjects.PageSBCrequest;
+import utility.Constant;
+import utility.Log;
+import utility.Selenium;
+import utility.XMLUtil;
+
+public class SBCrequestingPage {
+	
+	public static void login() {
+		
+		 {
+				
+				if ( SBCrequestingPage.isLoginPage() ) {
+					Reporter.log("Logging into SBC Request Page");
+					Log.info("Logging into SBC Request Page");
+					
+					
+					String user = XMLUtil.getXMLValue(Constant.Credential_File, "//Credentials/SIT/Project/AdminTool/UserName");
+					String pass = XMLUtil.getXMLValue(Constant.Credential_File, "//Credentials/SIT/Project/AdminTool/Password");
+					Selenium.type(PageAdminTool.TEXT_USERNAME,user);
+					Selenium.type(PageAdminTool.TEXT_PASSWORD, pass);
+					//Selenium.check("Remember Me", PageSFDC.CHECK_REMEMBERME);
+					Selenium.click("Login",PageAdminTool.BUTTON_LOGIN);
+					if ( Selenium.isElementPresent("REQUEST_SBC_MESSAGE",PageSBCrequest.REQUEST_SBC_MESSAGE)&Selenium.isElementPresent("ADHOC_SBC_REQUEST_MESSAGE", PageSBCrequest.ADHOC_SBC_REQUEST_MESSAGE)) {
+						Log.info("SBC Request page sucessfully loaded");
+						Reporter.log("SBC Request page sucessfully loaded");
+						Selenium.passTest("Logging into SBC request page is passed",true);
+						
+					}
+					else{
+						Log.info("SBC Request page loading failed");
+						Reporter.log("SBC Request page loading failed");
+						Selenium.passTest("Logging into SBC request page is failed",true);
+					}
+				}
+				else
+				{
+					Log.debug("Not at SBC Request page page");
+					Selenium.failTest("Failed authentication into the SBC Request Page Console!",true);
+					Reporter.log("Logging into SBC request page is failed");
+				}
+
+			}
+			
+
+	}
+
+	public static boolean isLoginPage(){
+		boolean sResult = false;
+		sResult = Selenium.isElementPresent("FMSSIT1", PageSBCrequest.TEXT_MESSAGE);
+		if(sResult){
+			Reporter.log("Application is at Login Page");
+			Selenium.passTest("Application is at Login Page");
+		}
+		else{
+			Reporter.log("Application is not at Login Page");
+			Selenium.passTest("Application is Not at Login Page");
+		}
+		return sResult;
+	}
+
+
+}

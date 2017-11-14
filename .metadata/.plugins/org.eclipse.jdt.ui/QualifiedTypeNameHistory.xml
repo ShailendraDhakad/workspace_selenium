@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="appModules.SBC_AdminTool"/>
+<fullyQualifiedTypeName name="pageObjects.PageAdminTool.PageAdminHome"/>
+<fullyQualifiedTypeName name="pageObjects.PageAdminTool.PageSBCpdfRepository"/>
+<fullyQualifiedTypeName name="appModules.SBCpdfRepository"/>
+<fullyQualifiedTypeName name="testData.PDFrepository_Fields"/>
+<fullyQualifiedTypeName name="java.sql.Driver"/>
+<fullyQualifiedTypeName name="pageObjects.PageAdminTool"/>
+<fullyQualifiedTypeName name="junit.framework.Assert"/>
+<fullyQualifiedTypeName name="org.eclipse.jetty.util.log.Log"/>
+<fullyQualifiedTypeName name="org.openqa.selenium.By"/>
+<fullyQualifiedTypeName name="testCases.AdminTool.SmallGroupSBCDownload_inPDFRepository"/>
+<fullyQualifiedTypeName name="pageObjects.PageAdminTool.PagePDFRepository"/>
+<fullyQualifiedTypeName name="utility.Selenium"/>
+<fullyQualifiedTypeName name="appModules.SBCrequestingPage"/>
+<fullyQualifiedTypeName name="org.openqa.selenium.WebDriver"/>
+<fullyQualifiedTypeName name="testData.SBCrequestingPage"/>
+<fullyQualifiedTypeName name="pageObjects.PageSBCrequest"/>
+<fullyQualifiedTypeName name="pageObjects.PageSBCrequest.PageSBCrequestFields"/>
+<fullyQualifiedTypeName name="utility.StringUtil"/>
+<fullyQualifiedTypeName name="utility.Log"/>
+</qualifiedTypeNameHistroy>
